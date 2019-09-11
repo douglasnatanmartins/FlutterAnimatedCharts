@@ -14,6 +14,7 @@ class _HomePageState extends State<HomePage> {
   List<charts.Series<Pollution, String>> _seriesData;
   List<charts.Series<Task, String>> _seriesPieData;
   List<charts.Series<Sales, int>> _seriesLineData;
+  List<charts.Series<Mouse , String>> _seriesPieDateLang;
 
   _generateData() {
     var data1 = [
@@ -67,6 +68,16 @@ class _HomePageState extends State<HomePage> {
       new Sales(5, 60),
     ];
 
+
+    var pieLinesDataLang1 = [
+      new Mouse('Dolphin', 60.8, Color(0xff3366cc)),
+      new Mouse('Factura X', 3.3, Color(0xff990099)),
+      new Mouse('Producción WEB', 2.8, Color(0xff109618)),
+      new Mouse('Clover CRM', 6.6, Color(0xfffdbe19)),
+      new Mouse('Vistra BI', 18.2, Color(0xffff9900)),
+      new Mouse('Backup Datos', 8.3, Color(0xffdc3912)),
+
+    ];
     _seriesData.add(
       charts.Series(
         domainFn: (Pollution pollution, _) => pollution.place,
@@ -115,6 +126,18 @@ class _HomePageState extends State<HomePage> {
       ),
     );
 
+    _seriesPieDateLang.add(
+      charts.Series(
+        domainFn: (Mouse mouse, _) => mouse.mouse,
+        measureFn: (Mouse mouse, _)=> mouse.mousevalue,
+        colorFn: (Mouse mouse, _) =>
+            charts.ColorUtil.fromDartColor(mouse.mouseval),
+        id: "Poluition",
+        data: pieLinesDataLang1,
+        labelAccessorFn: (Mouse row, _) =>  '${row.mousevalue}',
+      )
+    );
+
     _seriesLineData.add(
       charts.Series(
         colorFn: (__, _) => charts.ColorUtil.fromDartColor(Color(0xff990099)),
@@ -144,6 +167,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+
   @override
   void initState() {
     // TODO: implement initState
@@ -151,6 +175,7 @@ class _HomePageState extends State<HomePage> {
     _seriesData = List<charts.Series<Pollution, String>>();
     _seriesPieData = List<charts.Series<Task, String>>();
     _seriesLineData = List<charts.Series<Sales, int>>();
+    _seriesPieDateLang= List<charts.Series<Mouse, String>>();
     _generateData();
   }
 
@@ -158,7 +183,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: DefaultTabController(
-        length: 3,
+        length: 4,
         child: Scaffold(
           appBar: AppBar(
             backgroundColor: Color(0xff1976d2),
@@ -171,6 +196,8 @@ class _HomePageState extends State<HomePage> {
                 ),
                 Tab(icon: Icon(FontAwesomeIcons.chartPie)),
                 Tab(icon: Icon(FontAwesomeIcons.chartLine)),
+                Tab(icon: Icon(FontAwesomeIcons.chartArea)),
+
               ],
             ),
             title: Text('Flutter Charts'),
@@ -178,7 +205,7 @@ class _HomePageState extends State<HomePage> {
           body: TabBarView(
             children: [
               Padding(
-                padding: EdgeInsets.all(8.0),
+                padding: EdgeInsets.all(1.0),
                 child: Container(
                   child: Center(
                     child: Column(
@@ -191,7 +218,7 @@ class _HomePageState extends State<HomePage> {
                             animate: true,
                             barGroupingType: charts.BarGroupingType.grouped,
                             //behaviors: [new charts.SeriesLegend()],
-                            animationDuration: Duration(seconds: 5),
+                            animationDuration: Duration(seconds: 1),
                           ),
                         ),
                       ],
@@ -212,7 +239,7 @@ class _HomePageState extends State<HomePage> {
                           child: charts.PieChart(
                             _seriesPieData,
                             animate: true,
-                            animationDuration: Duration(seconds: 5),
+                            animationDuration: Duration(seconds: 1),
                              behaviors: [
                             new charts.DatumLegend(
                               outsideJustification: charts.OutsideJustification.endDrawArea,
@@ -251,7 +278,7 @@ class _HomePageState extends State<HomePage> {
                             defaultRenderer: new charts.LineRendererConfig(
                                 includeArea: true, stacked: true),
                             animate: true,
-                            animationDuration: Duration(seconds: 5),
+                            animationDuration: Duration(seconds: 1),
                             behaviors: [
         new charts.ChartTitle('Years',
             behaviorPosition: charts.BehaviorPosition.bottom,
@@ -265,6 +292,44 @@ class _HomePageState extends State<HomePage> {
             )   
       ]
                           ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Container(
+                  child: Center(
+                    child: Column(
+                      children: <Widget>[
+                        Text(
+                          'Productos Datapar S.A',style: TextStyle(fontSize: 24.0,fontWeight: FontWeight.bold),),
+                        SizedBox(height: 10.0,),
+                        Expanded(
+                          child: charts.PieChart(
+                              _seriesPieDateLang,
+                              animate: true,
+                              animationDuration: Duration(seconds: 1),
+                              behaviors: [
+                                new charts.DatumLegend(
+                                  outsideJustification: charts.OutsideJustification.endDrawArea,
+                                  horizontalFirst: false,
+                                  desiredMaxRows: 2,
+                                  cellPadding: new EdgeInsets.only(right: 4.0, bottom: 4.0),
+                                  entryTextStyle: charts.TextStyleSpec(
+                                      color: charts.MaterialPalette.purple.shadeDefault,
+                                      fontFamily: 'Georgia',
+                                      fontSize: 11),
+                                )
+                              ],
+                              defaultRenderer: new charts.ArcRendererConfig(
+                                  arcWidth: 100,
+                                  arcRendererDecorators: [
+                                    new charts.ArcLabelDecorator(
+                                        labelPosition: charts.ArcLabelPosition.inside)
+                                  ])),
                         ),
                       ],
                     ),
@@ -300,4 +365,12 @@ class Sales {
   int salesval;
 
   Sales(this.yearval, this.salesval);
+}
+
+class Mouse {
+  String mouse;
+  double mousevalue;
+  Color mouseval;
+
+  Mouse(this.mouse, this.mousevalue, this.mouseval);
 }
